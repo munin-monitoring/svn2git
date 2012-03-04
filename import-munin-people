@@ -1,0 +1,93 @@
+#!/bin/sh
+
+set -u
+set -e
+
+rootdir=$(mktemp -d munin-people.XXXXXX)
+
+import_from_svn() {
+    echo "### Running svn2git..."
+    svn2git --rootistrunk svn://munin-monitoring.org/munin/people
+}
+
+sanity_check() {
+    echo "### Sanity check"
+    test -d .git
+}
+
+echo "### Importing to $rootdir"
+cd $rootdir && import_from_svn && sanity_check
+
+people="$(find . -mindepth 1 -maxdepth 1 -type d -not -name .git -print0 \
+            | xargs -0 -r -n1 basename \
+            | sort)"
+
+for person in $people; do
+    echo "### Making branch people-$person"
+    case $person in
+        auth)
+            # not interesting
+            ;;
+        ay)
+            git checkout -b "people-ay" master
+            git filter-branch --force --subdirectory-filter ay/blatti
+            ;;
+        ilmari)
+            git checkout -b "people-ilmari" master
+            git filter-branch --force --subdirectory-filter ilmari/modularisation-branch
+            ;;
+        jo)
+            git checkout -b people-jo-multilevel-groups master
+            git filter-branch --force --subdirectory-filter jo/multilevel-groups
+            git checkout -b people-jo-multilevel-groups-1 master
+            git filter-branch --force --subdirectory-filter jo/multilevel-groups-2
+            git checkout -b people-jo-multilevel-groups-2 master
+            git filter-branch --force --subdirectory-filter jo/multilevel-groups-3
+            ;;
+        jorne)
+            git checkout -b people-jorne-cgihtml master
+            git filter-branch --force --subdirectory-filter jorne/cgihtml/trunk/
+            git checkout -b people-jorne-debian master
+            git filter-branch --force --subdirectory-filter jorne
+            git filter-branch --force --prune-empty --index-filter 'git rm -r --cached --ignore-unmatch cgihtml'
+            ;;
+        luke)
+            git checkout -b people-luke-munin-async master
+            git filter-branch --force --subdirectory-filter luke/munin-async
+            git checkout -b people-luke-munin-async-review master
+            git filter-branch --force --subdirectory-filter luke/munin-async-review
+            git checkout -b people-luke-redhat master
+            git filter-branch --force --subdirectory-filter luke/redhat
+            ;;
+        lupe)
+            # no files
+            ;;
+        snide)
+            snide_subdirs="1.4-timeout config-performance dynazoom-template no-rrd-limits update-perf"
+            for i in $snide_subdirs; do
+                git checkout -b people-snide-$i master
+                git filter-branch --force --subdirectory-filter snide/$i
+            done
+            git checkout -b people-snide-debian master
+            git filter-branch --force --prune-empty --index-filter "git rm -r --cached --ignore-unmatch $snide_subdirs"
+            ;;
+        ssm)
+            git checkout -b "people-$person" master
+            git filter-branch --force --subdirectory-filter $person
+            git filter-branch --force --prune-empty --tree-filter "mv -f plugins/iostat plugins/node.d"
+            ;;
+        tore)
+            # no files
+            ;;
+        zugschlus)
+            # Just a testfile commit
+            ;;
+        *)
+            git checkout -b "people-$person" master
+            git filter-branch --force --subdirectory-filter $person
+            ;;
+    esac
+    git clean -fdx
+        
+done
+echo "XXX Done: $rootdir"
