@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -e
+set -u
+
+cd munin.svn2git
+
+add_packaging_simple() {
+    git remote add packaging-simple ../munin-packaging-simple.svn2git
+    git remote update
+
+    branches="$(git branch -r | tr -d '*' | grep packaging-simple/packaging)"
+    for branch in $branches; do
+        git checkout -b ${branch#packaging-simple/} $branch
+    done
+}
+
+add_people() {
+    git remote add people/munin-people.svn2git
+    git remote update
+    
+    branches="$(git branch -r | tr -d '*' | grep people/people)"
+    for branch in $branches; do
+        git checkout -b ${branch#people/} $branch
+    done
+}
+
+add_packaging_simple
+add_people
