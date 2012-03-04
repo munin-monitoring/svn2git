@@ -10,7 +10,7 @@ import_from_svn() {
     svn2git --authors="$SVN2GIT_AUTHORS" \
         --exclude=^/branches/debian \
         --exclude=^/people \
-        http://munin-monitoring.org/svn/munin
+        svn://munin-monitoring.org/munin
 }
 
 sanity_check() {
