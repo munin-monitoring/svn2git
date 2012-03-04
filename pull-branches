@@ -6,6 +6,9 @@ set -u
 cd munin.svn2git
 
 add_packaging_simple() {
+    if ( git remote | grep -qx packaging-simple ); then
+        return 0
+    fi
     git remote add packaging-simple ../munin-packaging-simple.svn2git
     git remote update
 
@@ -16,9 +19,12 @@ add_packaging_simple() {
 }
 
 add_people() {
-    git remote add people/munin-people.svn2git
+    if ( git remote | grep -qx people ); then
+        return 0
+    fi
+    git remote add people ../munin-people.svn2git
     git remote update
-    
+
     branches="$(git branch -r | tr -d '*' | grep people/people)"
     for branch in $branches; do
         git checkout -b ${branch#people/} $branch

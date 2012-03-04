@@ -2,7 +2,13 @@
 
 set -e
 set -u
-rootdir="${PWD}/$(mktemp -d convert.XXXXXXXX)"
+set -x
+
+if [ -d "${1:-}" ]; then
+    rootdir=$1
+else
+    rootdir="${PWD}/$(mktemp -d convert.XXXXXXXX)"
+fi
 bindir="${PWD}/bin"
 authors="${PWD}/authors"
 
@@ -13,11 +19,19 @@ cd $rootdir
 
 export SVN2GIT_AUTHORS=$authors
 
-${bindir}/import-munin
-${bindir}/merge-tags-to-master
+if [ ! -d munin.svn2git ]; then
+    ${bindir}/import-munin
+    ${bindir}/merge-tags-to-master
+fi
 
-${bindir}/import-munin-people
-${bindir}/import-munin-packaging-simple
+if [ ! -d munin-people.svn2git ]; then
+    sh -x ${bindir}/import-munin-people
+fi
+
+if [ ! -d munin-packaging-simple.svn2git ]; then
+    ${bindir}/import-munin-packaging-simple
+fi
+
 ${bindir}/pull-branches
 
 # Missing: import-munin-packaging-other

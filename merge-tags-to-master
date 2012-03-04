@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -e
 set -u
 
 tags="
@@ -79,6 +80,9 @@ merge_all_tags() {
     done
 }
 
+echo "### START $0"
+cd munin.svn2git
+
 # Sanity check
 test -d .git || exit 1
 
@@ -87,3 +91,4 @@ write_git_config || exit 1
 
 # Reset the branch to zero, and start merging
 reset_branch && merge_all_tags
+echo "### END $0"

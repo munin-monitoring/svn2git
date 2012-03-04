@@ -7,7 +7,9 @@ rootdir=$(mktemp -d munin-packaging-simple.XXXXXX)
 
 import_from_svn() {
     echo "### Running svn2git..."
-    svn2git --authors="$SVN2GIT_AUTHORS" --rootistrunk svn://munin-monitoring.org/munin/branches/debian
+    svn2git --authors="$SVN2GIT_AUTHORS" \
+        --rootistrunk --nobranches --notags \
+        svn://munin-monitoring.org/munin/branches/debian
 }
 
 sanity_check() {
