@@ -32,6 +32,18 @@ if [ ! -d munin-packaging-simple.svn2git ]; then
     ${bindir}/import-munin-packaging-simple
 fi
 
+if [ ! -d munin-packaging-squeeze.svn2git ]; then
+    ${bindir}/import-munin-packaging-squeeze
+fi
+
+if [ ! -d munin-packaging-lenny.svn2git ]; then
+    ${bindir}/import-munin-packaging-lenny
+fi
+
+if [ ! -d munin-packaging-experimental.svn2git ]; then
+    ${bindir}/import-munin-packaging-experimental
+fi
+
 ${bindir}/pull-branches
 
 # Missing: import-munin-packaging-other
