@@ -79,6 +79,9 @@ merge_all_tags() {
     done
 }
 
+# Sanity check
+test -d .git || exit 1
+
 # Update git configuration
 write_git_config || exit 1
 
