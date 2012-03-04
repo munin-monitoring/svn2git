@@ -23,15 +23,6 @@ write_git_config() {
     git config branch.master.mergeoptions "--no-stat --ff -s recursive -X theirs"
 }
 
-check_branch_name() {
-    branch=$(git branch 2>/dev/null | awk '$1 == "*" {print $2}')
-
-    if [ "$branch" != "master" ]; then
-        echo 'Must be on "master" branch'
-        exit 1
-    fi
-}
-
 tag_timestamp() {
     git log -n 1 $tag | awk '$1 == "Date:" {print $2, $3, $4, $5, $6, $7}'
 }
@@ -87,10 +78,6 @@ merge_all_tags() {
         fi
     done
 }
-
-
-# Sanity checks
-check_branch_name || exit 1
 
 # Update git configuration
 write_git_config || exit 1

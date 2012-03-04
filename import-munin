@@ -18,11 +18,18 @@ sanity_check() {
     test -d .git
 }
 
+rename_and_recreate_master() {
+    git branch -m master develop
+    git symbolic-ref HEAD refs/heads/master
+    rm .git/index
+    git clean -fdx
+}
+
 echo "### Importing to $rootdir"
 
 cd $rootdir
 import_from_svn && sanity_check
-git branch -m master develop
+rename_and_recreate_master
 echo "### Done: $rootdir"
 
 cd ..
