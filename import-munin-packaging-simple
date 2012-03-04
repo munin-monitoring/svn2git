@@ -1,0 +1,50 @@
+#!/bin/sh
+
+set -u
+set -e
+
+rootdir=$(mktemp -d munin-packaging-simple.XXXXXX)
+
+import_from_svn() {
+    echo "### Running svn2git..."
+    svn2git --rootistrunk svn://munin-monitoring.org/munin/branches/debian
+}
+
+sanity_check() {
+    echo "### Sanity check"
+    test -d .git
+}
+
+echo "### Importing to $rootdir"
+cd $rootdir && import_from_svn && sanity_check
+
+distributions="etch sarge sid wheezy"
+
+for d in $distributions; do
+    echo "### Making branch packaging-$d"
+    case $d in
+        sarge)
+            git checkout -b packaging-sarge master
+            git filter-branch --force --subdirectory-filter sarge
+            ;;
+        etch)
+            git checkout -b packaging-etch master
+            git filter-branch --force --subdirectory-filter etch
+            ;;
+        wheezy)
+            git checkout -b packaging-wheezy master
+            git filter-branch --force --subdirectory-filter wheezy/trunk
+            ;;
+        sid)
+            git checkout -b packaging-sid master
+            git filter-branch --force --subdirectory-filter sid/trunk
+            ;;
+        *)
+            echo "###: WTF?"
+            exit 1
+            ;;
+    esac
+    git clean -fdx
+
+done
+echo "XXX Done: $rootdir"
