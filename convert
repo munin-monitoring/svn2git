@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+set -u
+rootdir="${PWD}/$(mktemp -d convert.XXXXXXXX)"
+bindir="${PWD}/bin"
+authors="${PWD}/authors"
+
+test -f $authors
+test -d $bindir
+
+cd $rootdir
+
+export SVN2GIT_AUTHORS=$authors
+
+${bindir}/import-munin
+${bindir}/merge-tags-to-master
+
+${bindir}/import-munin-people
+${bindir}/import-munin-packaging-simple
+${bindir}/pull-branches
+
+# Missing: import-munin-packaging-other
+
