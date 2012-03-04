@@ -89,6 +89,11 @@ for person in $people; do
             ;;
     esac
     git clean -fdx
-        
+
 done
-echo "XXX Done: $rootdir"
+echo "### Done: $rootdir"
+
+cd ..
+test -d munin-people.svn2git && exit 1 || true
+mv $rootdir munin-people.svn2git
+echo "### Done: munin-people.svn2git"

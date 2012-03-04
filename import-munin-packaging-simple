@@ -47,4 +47,9 @@ for d in $distributions; do
     git clean -fdx
 
 done
-echo "XXX Done: $rootdir"
+echo "### Done: $rootdir"
+
+cd ..
+test -d munin-packaging-simple.svn2git && exit 1 || true
+mv $rootdir munin-packaging-simple.svn2git
+echo "### Done: munin-packaging-simple.svn2git"
