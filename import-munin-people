@@ -69,6 +69,7 @@ for person in $people; do
                 git filter-branch --force --subdirectory-filter snide/$i
             done
             git checkout -b people-snide-debian master
+            git filter-branch --force --subdirectory-filter snide
             git filter-branch --force --prune-empty --index-filter "git rm -r --cached --ignore-unmatch $snide_subdirs"
             ;;
         ssm)
