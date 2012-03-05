@@ -8,7 +8,7 @@ rootdir=$(mktemp -d munin-packaging-lenny.XXXXXX)
 import_from_svn() {
     echo "### Running svn2git..."
     svn2git --authors="$SVN2GIT_AUTHORS" \
-        svn://munin-monitoring.org/munin/branches/debian/lenny
+        ${SVN2GIT_REPO}/branches/debian/lenny
 }
 
 sanity_check() {

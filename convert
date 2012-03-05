@@ -18,6 +18,7 @@ test -d $bindir
 cd $rootdir
 
 export SVN2GIT_AUTHORS=$authors
+export SVN2GIT_REPO=svn+ssh://munin-monitoring.org/svn/munin
 
 if [ ! -d munin.svn2git ]; then
     ${bindir}/import-munin
