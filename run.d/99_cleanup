@@ -1,9 +1,13 @@
 #!/bin/sh
 
-# Clean up branches we don't need
-git branch -D packaging-etch
-git branch -D packaging-sarge
-git branch -D packaging-sid
-git branch -D toretest
-git branch -d 1.3-flux@1258
+set -e
+set -u
+
+cd munin.svn2git
+
+for branch in packaging-etch packaging-sarge packaging-sid toretest 1.3-flux@1258; do
+    if ( git branch | grep -qw $branch ); then
+        git branch -D $branch
+    fi
+done
 
