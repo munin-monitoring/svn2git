@@ -3,7 +3,15 @@
 set -u
 set -e
 
-rootdir=$(mktemp -d munin-packaging-squeeze.XXXXXX)
+pre_check() {
+    if post_check; then
+        echo "Already done, skipping..."
+        exit 0
+    fi
+}
+post_check() {
+    test -d munin-packaging-squeeze.svn2git
+}
 
 import_from_svn() {
     echo "### Running svn2git..."
@@ -16,12 +24,21 @@ sanity_check() {
     test -d .git
 }
 
-echo "### Importing to $rootdir"
-cd $rootdir && import_from_svn && sanity_check
+import_packaging() {
+    rootdir=$(mktemp -d munin-packaging-squeeze.XXXXXX)
 
-echo "### Done: $rootdir"
+    echo "### Importing to $rootdir"
+    cd $rootdir && import_from_svn && sanity_check
 
-cd ..
-test -d munin-packaging-squeeze.svn2git && exit 1 || true
-mv $rootdir munin-packaging-squeeze.svn2git
-echo "### Done: munin-packaging-squeeze.svn2git"
+    echo "### Done: $rootdir"
+
+    cd ..
+    test -d munin-packaging-squeeze.svn2git && exit 1 || true
+    mv $rootdir munin-packaging-squeeze.svn2git
+    echo "### Done: munin-packaging-squeeze.svn2git"
+}
+
+
+pre_check
+import_packaging
+post_check

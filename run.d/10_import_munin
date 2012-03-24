@@ -4,7 +4,20 @@ set -u
 set -e
 set -x
 
-rootdir=$(mktemp -d munin.XXXXXX)
+# Imports munin trunk, branches and tags into munin.svn2git 
+
+pre_check() {
+    if post_check; then
+        echo "Already done, skipping."
+        exit 0
+    fi
+    test -d ${SVN2GIT_SVN_WORKDIR}
+    test -f ${SVN2GIT_SVN_WORKDIR}/authors
+}
+
+post_check() {
+    test -d munin.svn2git
+}
 
 import_from_svn() {
     echo "### Running svn2git..."
@@ -26,14 +39,19 @@ rename_and_recreate_master() {
     git clean -fdx
 }
 
-echo "### Importing to $rootdir"
+run_conversion() {
+    rootdir=$(mktemp -d munin.XXXXXX)
+    cd $rootdir
 
-cd $rootdir
-import_from_svn && sanity_check
-rename_and_recreate_master
-echo "### Done: $rootdir"
+    import_from_svn
+    sanity_check
+    rename_and_recreate_master
 
-cd ..
-test -d munin.svn2git && exit 1 || true
-mv $rootdir munin.svn2git
-echo "### Done: munin.svn2git"
+    cd ..
+    test -d munin.svn2git && exit 1 || true
+    mv $rootdir munin.svn2git
+}
+
+pre_check
+run_conversion
+post_check

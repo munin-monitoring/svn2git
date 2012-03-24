@@ -3,7 +3,17 @@
 set -u
 set -e
 
-rootdir=$(mktemp -d munin-packaging-lenny.XXXXXX)
+pre_check() {
+    if post_check; then
+        echo "Already done, skipping."
+        exit 0
+    fi
+}
+
+post_check() {
+    test -d munin-packaging-lenny.svn2git
+    test -d munin-packaging-lenny.svn2git/.git
+}
 
 import_from_svn() {
     echo "### Running svn2git..."
@@ -16,12 +26,21 @@ sanity_check() {
     test -d .git
 }
 
-echo "### Importing to $rootdir"
-cd $rootdir && import_from_svn && sanity_check
+import_lenny() {
+    rootdir=$(mktemp -d munin-packaging-lenny.XXXXXX)
 
-echo "### Done: $rootdir"
+    echo "### Importing to $rootdir"
+    cd $rootdir
+    import_from_svn
+    sanity_check
+    echo "### Done: $rootdir"
 
-cd ..
-test -d munin-packaging-lenny.svn2git && exit 1 || true
-mv $rootdir munin-packaging-lenny.svn2git
-echo "### Done: munin-packaging-lenny.svn2git"
+    cd ..
+    test -d munin-packaging-lenny.svn2git && exit 1 || true
+    mv $rootdir munin-packaging-lenny.svn2git
+    echo "### Done: munin-packaging-lenny.svn2git"
+}
+
+pre_check
+import_lenny
+post_check
