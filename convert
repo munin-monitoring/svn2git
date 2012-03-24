@@ -2,7 +2,6 @@
 
 set -e
 set -u
-set -x
 
 install -m 0700 -d tmp
 install -m 0700 -d var
@@ -15,4 +14,5 @@ export SVN2GIT_REPO=svn+ssh://munin-monitoring.org/svn/munin
 export SVN2GIT_SVN_WORKDIR="${PWD}/tmp/munin.svn"
 export SVN2GIT_ROOTDIR=$rootdir
 
-cd $rootdir && run-parts ${rundir}
+cd $rootdir
+run-parts --verbose --exit-on-error ${rundir}

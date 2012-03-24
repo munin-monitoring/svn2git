@@ -1,6 +1,0 @@
-#!/bin/sh
-
-set -e
-
-install -d tmp
-install -d var
