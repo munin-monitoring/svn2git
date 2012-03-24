@@ -2,6 +2,7 @@
 
 set -u
 set -e
+set -x
 
 rootdir=$(mktemp -d munin.XXXXXX)
 

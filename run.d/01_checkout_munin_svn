@@ -2,9 +2,6 @@
 
 set -e
 
-src=svn+ssh://munin-monitoring.org/svn/munin/trunk
-dst=tmp/munin.svn
-
 if [ ! -d ${dst} ]; then
-   svn co ${src} ${dst}
+   svn co "${SVN2GIT_REPO}" "${dst}"
 fi

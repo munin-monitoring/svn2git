@@ -4,21 +4,15 @@ set -e
 set -u
 set -x
 
-if [ -d "${1:-}" ]; then
-    rootdir=$1
-else
-    rootdir="${PWD}/$(mktemp -d convert.XXXXXXXX)"
-fi
-bindir="${PWD}/bin"
-rundir="${bindir}/run.d"
-authors="${PWD}/tmp/munin.svn/authors"
+install -m 0700 -d tmp
+install -m 0700 -d var
 
-test -f $authors
-test -d $bindir
+rootdir="${PWD}/$(mktemp -d tmp/convert.XXXXXXXX)"
+rundir="${PWD}/run.d"
 
-cd $rootdir
-
-export SVN2GIT_AUTHORS=$authors
+export SVN2GIT_AUTHORS="${PWD}/tmp/munin.svn/authors"
 export SVN2GIT_REPO=svn+ssh://munin-monitoring.org/svn/munin
+export SVN2GIT_SVN_WORKDIR="${PWD}/tmp/munin.svn"
+export SVN2GIT_ROOTDIR=$rootdir
 
-run-parts ${rundir}
+cd $rootdir && run-parts ${rundir}
