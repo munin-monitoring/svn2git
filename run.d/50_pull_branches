@@ -3,7 +3,21 @@
 set -e
 set -u
 
-cd munin.svn2git
+pre_check() {
+    if post_check; then
+        echo "Already done, skipping."
+        exit 0
+    fi
+    test -d munin.svn2git
+}
+
+post_check() {
+    test -d munin.svn2git
+    pushd munin.svn2git
+    git remote | grep -qx people
+    git remote | grep -qx packaging-simple
+    popd
+}
 
 add_packaging_simple() {
     if ( git remote | grep -qx packaging-simple ); then
@@ -31,5 +45,13 @@ add_people() {
     done
 }
 
-add_packaging_simple
-add_people
+pull_branches() {
+    pushd munin.svn2git
+    add_packaging_simple
+    add_people
+    popd
+}
+
+pre_check
+pull_branches
+
