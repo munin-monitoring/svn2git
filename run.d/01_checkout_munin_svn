@@ -13,7 +13,7 @@ post_check() {
 
 checkout() {
     if [ ! -d ${SVN2GIT_SVN_WORKDIR} ]; then
-        svn co "${SVN2GIT_SVN_REPO}/trunk" "${SVN2GIT_SVN_WORKDIR}"
+        svn co -q "${SVN2GIT_SVN_REPO}/trunk" "${SVN2GIT_SVN_WORKDIR}"
     fi
 }
 

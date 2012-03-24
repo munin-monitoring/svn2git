@@ -17,7 +17,7 @@ post_check() {
 }
 
 update() {
-    svn up "${SVN2GIT_SVN_WORKDIR}"
+    svn up -q "${SVN2GIT_SVN_WORKDIR}"
 }
 
 pre_check
