@@ -31,6 +31,14 @@ tags="
 
 pre_check() {
     test -d munin.svn2git/.git
+    if [ -f munin.svn2git/.git/index ]; then
+        echo "Git index exists, this is wrong"
+        exit 1
+    fi
+}
+
+post_check() {
+    test -f munin.svn2git/.git/index
 }
 
 write_git_config() {
@@ -42,7 +50,6 @@ tag_timestamp() {
 }
 
 reset_branch() {
-    git checkout master
     git reset --hard 0.9.9r7
     git clean -fdx
 }
@@ -94,7 +101,9 @@ merge_tags_to_master() {
     reset_branch
     write_git_config
     merge_all_tags
+    git checkout master
 }
 
 pre_check
 merge_tags_to_master
+post_check
