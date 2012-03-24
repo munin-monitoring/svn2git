@@ -4,7 +4,6 @@ set -e
 set -u
 
 install -m 0700 -d tmp
-install -m 0700 -d var
 
 if [ -d "${1:-}" ]; then
     rootdir=$1
@@ -21,8 +20,7 @@ export SVN2GIT_ROOTDIR=$rootdir
 
 echo ": munin svn2git session ; ${0} ${rootdir}"
 
-cd $rootdir
-run-parts --report --exit-on-error ${rundir}
+( cd $rootdir && run-parts --verbose --exit-on-error ${rundir} )
 
 # Update "munin" symlink to point to latest successful run.
 rm -f munin
