@@ -3,10 +3,12 @@
 set -u
 set -e
 
-# Imports munin trunk, branches and tags into munin.svn2git 
+# Imports munin trunk, branches and tags into munin.svn2git
+
+# Moves "master" to "develop", and leaves an empty master branch.
 
 pre_check() {
-    if post_check; then
+    if [ -d munin.svn2git ]; then
         echo "Already done, skipping."
         exit 0
     fi
@@ -16,6 +18,10 @@ pre_check() {
 
 post_check() {
     test -d munin.svn2git
+    if [ -f munin.svn2git/.git/index ]; then
+        echo "Git index exists after run, this is wrong"
+        exit 1
+    fi
 }
 
 import_from_svn() {
