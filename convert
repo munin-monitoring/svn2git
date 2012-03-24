@@ -2,11 +2,17 @@
 
 set -e
 set -u
+set -x
 
 install -m 0700 -d tmp
 install -m 0700 -d var
 
-rootdir="${PWD}/$(mktemp -d tmp/convert.XXXXXXXX)"
+if [ -d "${1:-}" ]; then
+    rootdir=$1
+else
+    rootdir="${PWD}/$(mktemp -d tmp/convert.XXXXXXXX)"
+fi
+
 rundir="${PWD}/run.d"
 
 export SVN2GIT_AUTHORS="${PWD}/tmp/munin.svn/authors"
