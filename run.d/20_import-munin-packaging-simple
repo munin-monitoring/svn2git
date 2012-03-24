@@ -9,7 +9,7 @@ import_from_svn() {
     echo "### Running svn2git..."
     svn2git --authors="$SVN2GIT_AUTHORS" \
         --rootistrunk --nobranches --notags \
-        ${SVN2GIT_REPO}/branches/debian
+        ${SVN2GIT_SVN_REPO}/branches/debian
 }
 
 sanity_check() {

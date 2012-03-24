@@ -9,7 +9,7 @@ import_from_svn() {
     echo "### Running svn2git..."
     svn2git --authors="$SVN2GIT_AUTHORS" \
         --rootistrunk --nobranches --notags \
-        ${SVN2GIT_REPO}/people
+        ${SVN2GIT_SVN_REPO}/people
 }
 
 sanity_check() {

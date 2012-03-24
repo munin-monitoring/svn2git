@@ -10,7 +10,7 @@ rootdir="${PWD}/$(mktemp -d tmp/convert.XXXXXXXX)"
 rundir="${PWD}/run.d"
 
 export SVN2GIT_AUTHORS="${PWD}/tmp/munin.svn/authors"
-export SVN2GIT_REPO=svn+ssh://munin-monitoring.org/svn/munin
+export SVN2GIT_SVN_REPO=svn+ssh://munin-monitoring.org/svn/munin
 export SVN2GIT_SVN_WORKDIR="${PWD}/tmp/munin.svn"
 export SVN2GIT_ROOTDIR=$rootdir
 

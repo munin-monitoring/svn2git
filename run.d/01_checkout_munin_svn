@@ -3,5 +3,5 @@
 set -e
 
 if [ ! -d ${dst} ]; then
-   svn co "${SVN2GIT_REPO}" "${dst}"
+   svn co "${SVN2GIT_SVN_REPO}" "${dst}"
 fi

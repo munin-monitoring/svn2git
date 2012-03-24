@@ -11,7 +11,7 @@ import_from_svn() {
     svn2git --authors="$SVN2GIT_AUTHORS" \
         --exclude=^/branches/debian \
         --exclude=^/people \
-        ${SVN2GIT_REPO}
+        ${SVN2GIT_SVN_REPO}
 }
 
 sanity_check() {
