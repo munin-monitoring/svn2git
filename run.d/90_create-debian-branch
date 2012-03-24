@@ -3,9 +3,8 @@
 set -e
 set -u
 
-}
 packaging=packaging-wheezy
-upstream=2.0-rc3
+upstream=2.0-rc4
 
 pre_check() {
     if ( git branch --list debian | grep -q debian ); then
@@ -19,9 +18,11 @@ post_check() {
 }
 
 create_packaging_branch() {
-    git checkout -b debian $packaging
+    git checkout -B debian $packaging
     git merge $upstream
 }
+
+cd munin.svn2git
 
 pre_check
 create_packaging_branch

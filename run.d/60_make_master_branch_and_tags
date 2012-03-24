@@ -25,20 +25,18 @@ tags="
 1.4.5 1.4.6
 
 2.0-alpha1 2.0-alpha2 2.0-beta1 2.0-beta2 2.0-beta3 2.0-beta4
-2.0-beta5 2.0-beta6 2.0-beta7 2.0-rc1 2.0-rc2 2.0-rc3
+2.0-beta5 2.0-beta6 2.0-beta7 2.0-rc1 2.0-rc2 2.0-rc3 2.0-rc4
 
 "
 
 pre_check() {
-    test -d munin.svn2git/.git
-    if [ -f munin.svn2git/.git/index ]; then
-        echo "Git index exists, this is wrong"
-        exit 1
-    fi
+    git branch --list develop | grep -qw develop
 }
 
 post_check() {
-    test -f munin.svn2git/.git/index
+    git branch --list develop | grep -qw develop
+    git branch --list master | grep -qw master
+    test -f .git/index
 }
 
 write_git_config() {
@@ -50,8 +48,10 @@ tag_timestamp() {
 }
 
 reset_branch() {
-    git reset --hard 0.9.9r7
+    git symbolic-ref HEAD refs/heads/master
+    rm .git/index
     git clean -fdx
+    git reset --hard 0.9.9r7
 }
 
 merge_tag() {
@@ -97,12 +97,14 @@ merge_all_tags() {
 }
 
 merge_tags_to_master() {
-    cd munin.svn2git
     reset_branch
     write_git_config
     merge_all_tags
     git checkout master
 }
+
+
+cd munin.svn2git
 
 pre_check
 merge_tags_to_master

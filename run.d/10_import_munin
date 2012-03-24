@@ -5,8 +5,6 @@ set -e
 
 # Imports munin trunk, branches and tags into munin.svn2git
 
-# Moves "master" to "develop", and leaves an empty master branch.
-
 pre_check() {
     if [ -d munin.svn2git ]; then
         echo "Already done, skipping."
@@ -18,42 +16,22 @@ pre_check() {
 
 post_check() {
     test -d munin.svn2git
-    if [ -f munin.svn2git/.git/index ]; then
-        echo "Git index exists after run, this is wrong"
-        exit 1
-    fi
+    (
+        cd munin.svn2git
+        git branch --list master | grep -qw master
+    )
 }
 
 import_from_svn() {
-    echo "### Running svn2git..."
     svn2git --authors="$SVN2GIT_AUTHORS" \
         --exclude=^/branches/debian \
         --exclude=^/people \
         ${SVN2GIT_SVN_REPO}
 }
 
-sanity_check() {
-    echo "### Sanity check"
-    test -d .git
-}
-
-rename_and_recreate_master() {
-    git branch -m master develop
-    git symbolic-ref HEAD refs/heads/master
-    rm .git/index
-    git clean -fdx
-}
-
 run_conversion() {
     rootdir=$(mktemp -d munin.XXXXXX)
-    cd $rootdir
-
-    import_from_svn
-    sanity_check
-    rename_and_recreate_master
-
-    cd ..
-    test -d munin.svn2git && exit 1 || true
+    ( cd $rootdir && import_from_svn )
     mv $rootdir munin.svn2git
 }
 

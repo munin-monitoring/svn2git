@@ -1,0 +1,27 @@
+#!/bin/sh
+
+set -e
+set -u
+
+pre_check() {
+    if ( git branch --list develop | grep -qw develop ); then
+        echo "Already done, skipping..."
+        exit 0
+    fi
+    git branch --list master | grep -qw master
+}
+
+post_check() {
+    git branch --list develop | grep -qw develop
+}
+
+
+make_develop_branch() {
+    git branch --move master develop
+}
+
+cd munin.svn2git
+
+pre_check
+make_develop_branch
+post_check

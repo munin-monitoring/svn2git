@@ -5,9 +5,8 @@ set -u
 
 cd munin.svn2git
 
-for branch in packaging-etch packaging-sarge packaging-sid toretest 1.3-flux@1258; do
+for branch in  toretest 1.3-flux@1258; do
     if ( git branch | grep -qw $branch ); then
         git branch -D $branch
     fi
 done
-

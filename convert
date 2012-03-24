@@ -25,3 +25,5 @@ echo ": munin svn2git session ; ${0} ${rootdir}"
 # Update "munin" symlink to point to latest successful run.
 rm -f munin
 ln -s ${rootdir}/munin.svn2git munin
+
+echo 'Success.  Follow the "munin" symlink to your new and shiny git repo'
