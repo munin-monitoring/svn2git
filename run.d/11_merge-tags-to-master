@@ -3,23 +3,35 @@
 set -e
 set -u
 
+# Workaround: "git merge" starts an editor by default, and does not
+# (at this point) respect --no-edit or GIT_MERGE_AUTOEDIT=no
+export EDITOR=/bin/true
+
 tags="
+
 0.9.9r7
-1.0.0pre1 1.0.0pre2 1.0.0pre3 1.0.0pre4 1.0.0pre5 1.0.0 1.0.1 1.0.2 1.0.3 1.0.4 1.0.5
+
+1.0.0pre1 1.0.0pre2 1.0.0pre3 1.0.0pre4 1.0.0pre5 1.0.0 1.0.1 1.0.2
+1.0.3 1.0.4 1.0.5
+
 1.1.0 1.1.1 1.1.2 1.1.3 1.1.4 1.1.5 1.1.6 1.1.7 1.1.8 1.1.9
-1.2.0rc1 1.2.0rc2 1.2.0 1.2.1 1.2.2 1.2.3 1.2.4 1.2.5 1.2.6rc0 1.2.6rc1 1.2.6rc2 1.2.6
+
+1.2.0rc1 1.2.0rc2 1.2.0 1.2.1 1.2.2 1.2.3 1.2.4 1.2.5 1.2.6rc0
+1.2.6rc1 1.2.6rc2 1.2.6
+
 1.3.0 1.3.1 1.3.2 1.3.3rc 1.3.3 1.3.4
-1.4.0-alpha 1.4.0-alpha2 1.4.0-beta 1.4.0 1.4.1 1.4.2 1.4.3 1.4.4 1.4.5 1.4.6
-2.0-alpha1 2.0-alpha2 2.0-beta1 2.0-beta2 2.0-beta3 2.0-beta4 2.0-beta5 2.0-beta6 2.0-beta7
-2.0-rc1 2.0-rc2 2.0-rc3
+
+1.4.0-alpha 1.4.0-alpha2 1.4.0-beta 1.4.0 1.4.1 1.4.2 1.4.3 1.4.4
+1.4.5 1.4.6
+
+2.0-alpha1 2.0-alpha2 2.0-beta1 2.0-beta2 2.0-beta3 2.0-beta4
+2.0-beta5 2.0-beta6 2.0-beta7 2.0-rc1 2.0-rc2 2.0-rc3
+
 "
 
-# We need, of course, to write clear and concistent merge messages,
-# for clarity and understanding, for posterity, for...
-#
-# Naah, I'll stick with the defaults.
-EDITOR=/bin/true
-export EDITOR
+pre_check() {
+    test -d munin.svn2git/.git
+}
 
 write_git_config() {
     git config branch.master.mergeoptions "--no-stat --ff -s recursive -X theirs"
@@ -36,41 +48,36 @@ reset_branch() {
 }
 
 merge_tag() {
-    local EDITOR=/bin/true
     # Normal merge.  Check version, and handle conflicts
-    echo "### START MERGE: $tag"
+    echo
+    echo "### merge $tag"
     case $tag in
         2.0-alpha1)
             git merge $tag
             git rm master/_bin/munin-fastcgi-graph.in
-            git commit || exit 1
+            git commit
             ;;
         *)
-            git merge $tag || exit 1
-                ;;
+            git merge $tag
+            ;;
     esac
-    echo "### END MERGE: $tag"
 
     # Check for any differences against the tag we merged from, and
     # merge them harder
     if [ "$(git diff $tag)" != "" ]; then
-        echo "### START CLEANUP: $tag"
+        echo "### merge $tag harder"
         git diff --name-status $tag | awk '$1 == "M" {print $2}' | xargs -r git checkout $tag -- || exit 1
         git diff --name-status $tag | awk '$1 == "A" {print $2}' | xargs -r git rm || exit 1
         git diff --name-status $tag | awk '$1 == "D" {print $2}' | xargs -r git checkout $tag -- || exit 1
-        git commit --amend || exit 1
-        echo "### END CLEANUP: $tag"
+        # git commit --amend || exit 1
     fi
 
     # Update commit timestamp of current revision from tag
     timestamp="$(tag_timestamp $tag)"
-    echo "### SET TIMESTAMP FOR $tag: $timestamp"
     env GIT_COMMITTER_DATE="$timestamp" GIT_AUTHOR_DATE="$timestamp" git commit --amend -C HEAD
 }
 
 merge_all_tags() {
-# Merge and stop if anything wrong happens. Editor hint: Use "vi", and
-# just hold "Z" until done. (nasty but effective :)
     first=yes
     for tag in $tags; do
         if [ -n "$first" ]; then
@@ -82,15 +89,12 @@ merge_all_tags() {
     done
 }
 
-echo "### START $0"
-cd munin.svn2git
+merge_tags_to_master() {
+    cd munin.svn2git
+    reset_branch
+    write_git_config
+    merge_all_tags
+}
 
-# Sanity check
-test -d .git || exit 1
-
-# Update git configuration
-write_git_config || exit 1
-
-# Reset the branch to zero, and start merging
-reset_branch && merge_all_tags
-echo "### END $0"
+pre_check
+merge_tags_to_master
