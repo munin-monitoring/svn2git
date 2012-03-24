@@ -16,3 +16,7 @@ export SVN2GIT_ROOTDIR=$rootdir
 
 cd $rootdir
 run-parts --verbose --exit-on-error ${rundir}
+
+# Update "munin" symlink to point to latest successful run.
+rm -f munin
+ln -s ${rootdir}/munin.svn2git munin
