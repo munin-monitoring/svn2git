@@ -1,7 +1,27 @@
 #!/bin/sh
 
 set -e
+set -x
 
-if [ ! -d ${dst} ]; then
-   svn co "${SVN2GIT_SVN_REPO}" "${dst}"
-fi
+pre_check() {
+    command -v svn >/dev/null
+}
+
+post_check() {
+    test -d "${SVN2GIT_SVN_WORKDIR}"
+}
+
+checkout() {
+    if [ ! -d ${SVN2GIT_SVN_WORKDIR} ]; then
+        svn co "${SVN2GIT_SVN_REPO}/trunk" "${SVN2GIT_SVN_WORKDIR}"
+    fi
+}
+
+update() {
+    svn up "${SVN2GIT_SVN_WORKDIR}"
+}
+
+pre_check
+checkout
+update
+post_check
