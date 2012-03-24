@@ -1,0 +1,28 @@
+#!/bin/sh
+
+set -e
+set -u
+
+}
+packaging=packaging-wheezy
+upstream=2.0-rc3
+
+pre_check() {
+    if ( git branch --list debian | grep -q debian ); then
+        echo "Already done, skipping."
+        exit 0
+    fi
+}
+
+post_check() {
+    git branch --list debian | grep -q debian
+}
+
+create_packaging_branch() {
+    git checkout -b debian $packaging
+    git merge $upstream
+}
+
+pre_check
+create_packaging_branch
+post_check
