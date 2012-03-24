@@ -10,7 +10,8 @@ else
     rootdir="${PWD}/$(mktemp -d convert.XXXXXXXX)"
 fi
 bindir="${PWD}/bin"
-authors="${PWD}/authors"
+rundir="${bindir}/run.d"
+authors="${PWD}/tmp/munin.svn/authors"
 
 test -f $authors
 test -d $bindir
@@ -20,32 +21,4 @@ cd $rootdir
 export SVN2GIT_AUTHORS=$authors
 export SVN2GIT_REPO=svn+ssh://munin-monitoring.org/svn/munin
 
-if [ ! -d munin.svn2git ]; then
-    ${bindir}/import-munin
-    ${bindir}/merge-tags-to-master
-fi
-
-if [ ! -d munin-people.svn2git ]; then
-    sh -x ${bindir}/import-munin-people
-fi
-
-if [ ! -d munin-packaging-simple.svn2git ]; then
-    ${bindir}/import-munin-packaging-simple
-fi
-
-if [ ! -d munin-packaging-squeeze.svn2git ]; then
-    ${bindir}/import-munin-packaging-squeeze
-fi
-
-if [ ! -d munin-packaging-lenny.svn2git ]; then
-    ${bindir}/import-munin-packaging-lenny
-fi
-
-if [ ! -d munin-packaging-experimental.svn2git ]; then
-    ${bindir}/import-munin-packaging-experimental
-fi
-
-${bindir}/pull-branches
-
-# Missing: import-munin-packaging-other
-
+run-parts ${rundir}

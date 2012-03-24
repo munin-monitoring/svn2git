@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+src=svn+ssh://munin-monitoring.org/svn/munin/trunk
+dst=tmp/munin.svn
+
+if [ ! -d ${dst} ]; then
+   svn co ${src} ${dst}
+fi
