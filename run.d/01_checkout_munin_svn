@@ -4,7 +4,7 @@ set -e
 set -u
 
 pre_check() {
-    command -v svn >/dev/null
+    which svn >/dev/null
 }
 
 post_check() {

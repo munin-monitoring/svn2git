@@ -13,10 +13,11 @@ pre_check() {
 
 post_check() {
     test -d munin.svn2git
-    pushd munin.svn2git
-    git remote | grep -qx people
-    git remote | grep -qx packaging-simple
-    popd
+    (
+        cd munin.svn2git
+        git remote | grep -qx people
+        git remote | grep -qx packaging-simple
+    )
 }
 
 add_packaging_simple() {
@@ -46,10 +47,11 @@ add_people() {
 }
 
 pull_branches() {
-    pushd munin.svn2git
-    add_packaging_simple
-    add_people
-    popd
+    (
+        cd munin.svn2git
+        add_packaging_simple
+        add_people
+    )
 }
 
 pre_check
