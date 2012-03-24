@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+set -u
+
+pre_check() {
+    command -v svn >/dev/null
+    if post_check; then
+        echo "Already done, skipping."
+        exit 0
+    fi
+}
+
+post_check() {
+    test -d "${SVN2GIT_SVN_WORKDIR}"
+    test "$(svn stat -u ${SVN2GIT_SVN_WORKDIR} | wc -l)" = "1"
+}
+
+update() {
+    svn up "${SVN2GIT_SVN_WORKDIR}"
+}
+
+pre_check
+update
+post_check

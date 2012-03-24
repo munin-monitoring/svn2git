@@ -8,7 +8,7 @@ pre_check() {
 }
 
 post_check() {
-    test -d "${SVN2GIT_SVN_WORKDIR}"
+    svn info "${SVN2GIT_SVN_WORKDIR}" > /dev/null
 }
 
 checkout() {
@@ -17,11 +17,6 @@ checkout() {
     fi
 }
 
-update() {
-    svn up "${SVN2GIT_SVN_WORKDIR}"
-}
-
 pre_check
 checkout
-update
 post_check
