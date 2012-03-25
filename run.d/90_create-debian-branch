@@ -3,23 +3,31 @@
 set -e
 set -u
 
-packaging=packaging-wheezy
-upstream=2.0-rc4
+# Create a new packaging branch, meant for git packaging tools like
+# "git-buildpackage" or "gitpkg".
+
+# Base the new branch on the lastest svn packaging branch (which
+# contains only the /debian directory) and merge in the latest
+# upstream source.
+
+packaging_src=packaging-wheezy
+upstream_src=2.0-rc4
+new_packaging_branch=packaging-debian
 
 pre_check() {
-    if ( git branch --list debian | grep -q debian ); then
+    if ( git branch --list $new_packaging_branch | grep -qw $new_packaging_branch ); then
         echo "Already done, skipping."
         exit 0
     fi
 }
 
 post_check() {
-    git branch --list debian | grep -q debian
+    git branch --list $new_packaging_branch | grep -qw $new_packaging_branch
 }
 
 create_packaging_branch() {
-    git checkout -B debian $packaging
-    git merge $upstream
+    git checkout -B $new_packaging_branch $packaging_src
+    git merge $upstream_src
 }
 
 cd munin.svn2git
