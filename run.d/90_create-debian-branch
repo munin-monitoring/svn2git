@@ -11,7 +11,7 @@ set -u
 # upstream source.
 
 packaging_src=packaging-wheezy
-upstream_src=2.0-rc4
+upstream_src=2.0.0
 new_packaging_branch=packaging-debian
 
 pre_check() {
